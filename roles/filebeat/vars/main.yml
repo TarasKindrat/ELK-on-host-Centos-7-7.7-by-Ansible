@@ -1,0 +1,11 @@
+---
+# vars file for filebeat
+beat: filebeat
+elk_host_IP: 192.168.54.132
+temp_file: /tmp/filebeat_sed_config_beat_settings.sh
+run_script: /bin/bash /tmp/filebeat_sed_config_beat_settings.sh
+dashboard_setup: "{{ beat }} setup --dashboards"
+enable_module_system: "{{ beat }} modules enable system"
+enable_module_apache: "{{ beat }} modules enable apache"   
+enable_module_iptables: "{{ beat }} modules enable iptables" 
+enable_module_postgresql: "{{ beat }} modules enable postgresql"

@@ -1,0 +1,6 @@
+---
+# vars file for elkServer
+logstash_conf: /etc/logstash/conf.d 
+elk_host_IP: 192.168.0.132
+temp_file: /tmp/elastick_production_modification.sh
+run_script: /bin/bash /tmp/elastick_production_modification.sh

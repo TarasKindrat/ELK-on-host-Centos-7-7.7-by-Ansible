@@ -1,0 +1,37 @@
+---
+# tasks file for filebeat
+- include: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: load template for sed bas script
+  template:
+    src: filebeat_sed_config_beat_settings.sh.j2
+    dest: "{{ temp_file }}"
+    owner: root
+    group: root
+    mode: '0750'
+  notify: restart beat 
+
+- name: run sed
+  command: "{{ item }}"
+  with_items:
+    - "{{ run_script }}"
+    - "{{ enable_module_system }}"
+    - "{{ enable_module_apache }}"
+    - "{{ enable_module_iptables}}"
+    - "{{ enable_module_postgresql}}"
+  notify: restart beat
+
+- name: load dashboard
+  command: "{{ dashboard_setup }}"
+  when: elk_host_IP == "localhost"
+
+- name: Make sure a beat service is running and started
+  service:
+    name: "{{ beat }}"
+    state: started
+    enabled: yes
+  notify: restart beat

@@ -1,0 +1,92 @@
+---
+# tasks file for elkServer
+- name: Add  ELK repository
+  yum_repository:
+    name: Elasticsearch-repository-for-7.x-packages
+    description: Elasticsearch YUM repo
+    baseurl: https://artifacts.elastic.co/packages/7.x/yum
+    gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    gpgcheck: yes
+    enabled: yes
+
+- name: Update 
+  yum: update_cache=yes 
+
+- name: Install java
+  yum: 
+    name: java-1.8.0-openjdk
+
+- name: Install ELK
+  yum: 
+    name: 
+    - elasticsearch
+    - kibana
+    - logstash
+    state: latest  
+
+- name: install logstash to sytemd
+  command: /bin/bash /usr/share/logstash/bin/system-install
+
+- name: copy logstash settings
+  copy:
+    src: "{{ item }}"
+    dest: "{{ logstash_conf }}" 
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - 02-beats-input.conf
+    - 03-nginx-filter.conf
+    - 10-syslog-filter.conf 
+    - 30-elasticsearch-output.conf
+
+- name: Insert a rule on line 2 for beets
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 5044
+    jump: ACCEPT
+    action: insert
+    rule_num: 2
+
+- name: Insert a rule on line 3 for beets
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 9200
+    jump: ACCEPT
+    action: insert
+    rule_num: 3
+
+- name: Load template for sed bas script modif elastic config for prod
+  template:
+    src: elastick_production_modification.sh.j2
+    dest: "{{ temp_file }}"
+    owner: root
+    group: root
+    mode: '0750'
+  
+- name: Run sed
+  command: "{{ item }}"
+  with_items:
+    - "{{ run_script }}"
+    
+- name: Just force systemd to reread configs 
+  systemd: 
+     daemon_reload: yes
+
+- name: Make sure a service is running
+  systemd:
+    state: started
+    name: "{{ item }}"
+  with_items:  
+    - elasticsearch
+    - kibana
+    - logstash
+    
+- name: adding ELK to startup program
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    ['elasticsearch','kibana','logstash']   

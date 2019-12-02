@@ -1,0 +1,8 @@
+---
+# vars file for filebeat
+beat: metricbeat
+elk_host_IP: 192.168.0.132
+temp_file: /tmp/metricbeat_sed_config_beat_settings.sh
+run_script: /bin/bash /tmp/metricbeat_sed_config_beat_settings.sh
+enable_module_system: "{{ beat }} modules enable system"
+dashboard_setup: "{{ beat }} setup --dashboards"

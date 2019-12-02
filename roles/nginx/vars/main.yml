@@ -1,0 +1,10 @@
+---
+# vars file for nginx
+key_file: /etc/nginx/ssl/nginx.key
+cert_file: /etc/nginx/ssl/nginx.crt
+conf_file: /etc/nginx/conf.d/some_site.conf
+server_name: some_site
+basic_aut_username: admin
+basic_auth_password: somepassword
+
+#- name: htpassword generation

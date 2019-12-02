@@ -1,0 +1,20 @@
+- name: add apt ELK key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+
+- name: Add  ELK repository
+  apt_repository:
+    repo: ddeb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+
+- name: Update cashe. if the last one is more than 3600 seconds ago
+  apt: 
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install beat
+  apt: 
+    name: "{{ beat }}"
+    state: present
