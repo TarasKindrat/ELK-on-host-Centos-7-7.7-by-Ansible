@@ -1,0 +1,14 @@
+---
+- name: Install elk.stack on Centos 7
+  gather_facts: Yes
+  hosts: elk_stack
+  #become: True
+
+  roles:
+    - role: nginx
+    - role: elkServer
+    - role: filebeat
+    - role: metricbeat 
+    - role: packetbeat
+      elk_host_IP: 'localhost'
+     
