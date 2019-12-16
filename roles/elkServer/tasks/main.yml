@@ -40,23 +40,37 @@
     - 10-syslog-filter.conf 
     - 30-elasticsearch-output.conf
 
-- name: Insert a rule on line 2 for beets
-  iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: 5044
-    jump: ACCEPT
-    action: insert
-    rule_num: 2
+#- name: Insert a rule on line 2 for beets
+#  iptables:
+#    chain: INPUT
+#    protocol: tcp
+#    destination_port: 5044
+#    jump: ACCEPT
+#    action: insert
+#    rule_num: 2
 
-- name: Insert a rule on line 3 for beets
-  iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: 9200
-    jump: ACCEPT
-    action: insert
-    rule_num: 3
+#- name: Insert a rule on line 3 for beets
+#  iptables:
+#    chain: INPUT
+#    protocol: tcp
+#    destination_port: 9200
+#    jump: ACCEPT
+#    action: insert
+#    rule_num: 3
+#- name: open logstash port
+#  firewalld:
+#    port: 5044/tcp
+#    permanent: yes
+#    state: enabled
+    
+- name: open elasticksearch port
+  firewalld:
+    port: 9200/tcp
+    permanent: yes
+    state: enabled  
+
+- name: reload firewalld
+  command: firewall-cmd --reload
 
 - name: Load template for sed bas script modif elastic config for prod
   template:
